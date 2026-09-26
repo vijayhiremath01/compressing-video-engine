@@ -1,0 +1,23 @@
+# Build artifacts
+build/
+*.o
+*.obj
+
+# Executables
+compressor
+decoder
+encoder
+video_compressor
+version_test
+
+# Test files
+test_*.mp4
+input.txt
+output.txt
+
+# IDE/OS
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/

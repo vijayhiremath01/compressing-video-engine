@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Uploads
+uploads/
+*.mp4
+*.mov
+*.mkv
+*.avi
+*.webm
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE/OS
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Test files
+check-job.ts
+check-job2.ts
+
+# Temp files
+*.tmp
+*.temp
+
+# Coverage
+coverage/
+.nyc_output/
