@@ -1,0 +1,30 @@
+# Git
+.git
+.gitignore
+
+# Node
+backend/node_modules
+backend/dist
+backend/*.log
+backend/.env
+backend/.env.local
+
+# Engine build artifacts
+engine/build
+engine/video_compressor
+engine/compressor
+engine/encoder
+engine/decoder
+engine/version_test
+
+# IDE
+.vscode
+.DS_Store
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Logs
+*.log

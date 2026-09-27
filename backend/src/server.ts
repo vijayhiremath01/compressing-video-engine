@@ -1,4 +1,4 @@
-import app from "../src/app";
+import app from "./app";
 import { env } from "./config/env";
 import { checkCloudinary } from "./config/health-config/cloudinary.health";
 import { checkDbConnection } from "./config/health-config/db.health";

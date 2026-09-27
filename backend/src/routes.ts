@@ -11,12 +11,6 @@ const router = Router();
 
 router.post(
     "/compression/jobs",
-    upload.single("video"),
-    createCompressionJob
-);
-
-router.post(
-    "/compression/jobs",
     compressionLimiter,
     upload.single("video"),
     createCompressionJob

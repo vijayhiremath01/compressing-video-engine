@@ -21,10 +21,7 @@ function getPort(): number {
 }
 
 function getCompressorPath(): string {
-    const path = process.env.COMPRESSOR_PATH;
-    if (!path) {
-        throw new Error("Missing required environment variable: COMPRESSOR_PATH");
-    }
+    const path = process.env.COMPRESSOR_PATH ?? "/usr/local/bin/compressor";
     return path;
 }
 
