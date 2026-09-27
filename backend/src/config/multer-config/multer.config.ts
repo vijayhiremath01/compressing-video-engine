@@ -23,8 +23,9 @@ const fileFilter = (
     file: Express.Multer.File,
     cb: multer.FileFilterCallback
 ): void => {
-    if (!ALLOWED_VIDEO_MIME_TYPES.includes(file.mimetype)) {
-        cb(new Error(`Invalid file type. Allowed types: ${ALLOWED_VIDEO_MIME_TYPES.join(", ")}`));
+    const isVideo = ALLOWED_VIDEO_MIME_TYPES.includes(file.mimetype) || file.mimetype.startsWith("video/");
+    if (!isVideo) {
+        cb(new Error(`Invalid file type: ${file.mimetype}. Allowed: video/*`));
         return;
     }
     cb(null, true);
