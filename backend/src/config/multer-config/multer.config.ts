@@ -8,8 +8,11 @@ const ALLOWED_VIDEO_MIME_TYPES = [
     "video/x-msvideo",
     "video/x-matroska",
     "video/webm",
+    "video/3gpp",
+    "video/3gpp2",
     "application/mp4",
     "application/octet-stream",
+    "binary/octet-stream",
 ];
 
 const MAX_FILE_SIZE = 500 * 1024 * 1024;
