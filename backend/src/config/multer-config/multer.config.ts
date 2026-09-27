@@ -13,6 +13,7 @@ const ALLOWED_VIDEO_MIME_TYPES = [
     "application/mp4",
     "application/octet-stream",
     "binary/octet-stream",
+    "video/*",
 ];
 
 const MAX_FILE_SIZE = 500 * 1024 * 1024;
