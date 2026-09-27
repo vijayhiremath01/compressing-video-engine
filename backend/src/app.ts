@@ -1,10 +1,15 @@
 import express from "express";
+import cors from "cors";
 import path from "path";
 import multer from "multer";
 import routes from "./routes";
 
 const app = express();
 
+app.use(cors({
+  origin: true,
+  credentials: true,
+}));
 app.use(express.json());
 
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
