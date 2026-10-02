@@ -1,13 +1,24 @@
 import { rateLimit } from "express-rate-limit";
+import { env } from "../env";
 
-export const compressionLimiter = rateLimit({
-    windowMs: 60 * 1000, // 1 minute
-    limit: 10,
-    standardHeaders: "draft-8",
-    legacyHeaders: false,
-    ipv6Subnet: 56,
+function buildLimiter(windowMs: number, limit: number, message: string) {
+    return rateLimit({
+        windowMs,
+        limit,
+        standardHeaders: true,
+        legacyHeaders: false,
+        handler: (_req, res) => res.status(429).json({ message }),
+    });
+}
 
-    message: {
-        message: "Too many compression requests. Please try again later."
-    }
-});
+export const apiLimiter = buildLimiter(
+    env.rateLimitWindowMs,
+    env.rateLimitMax,
+    "Too many requests. Please try again later."
+);
+
+export const compressionLimiter = buildLimiter(
+    env.compressionRateLimitWindowMs,
+    env.compressionRateLimitMax,
+    "Too many compression requests. Please try again later."
+);

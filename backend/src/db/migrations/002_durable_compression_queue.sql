@@ -1,0 +1,12 @@
+ALTER TABLE compression_jobs
+    ADD COLUMN IF NOT EXISTS original_public_id TEXT NULL,
+    ADD COLUMN IF NOT EXISTS attempts INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS max_attempts INTEGER NOT NULL DEFAULT 3,
+    ADD COLUMN IF NOT EXISTS locked_at TIMESTAMPTZ NULL,
+    ADD COLUMN IF NOT EXISTS worker_id TEXT NULL,
+    ADD COLUMN IF NOT EXISTS last_error TEXT NULL,
+    ADD COLUMN IF NOT EXISTS queued_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+
+CREATE INDEX IF NOT EXISTS idx_compression_jobs_queue
+    ON compression_jobs(status, queued_at)
+    WHERE status = 'QUEUED';

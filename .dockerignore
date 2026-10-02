@@ -3,7 +3,7 @@
 .gitignore
 
 # Node
-backend/node_modules
+**/node_modules
 backend/dist
 backend/*.log
 backend/.env
@@ -22,9 +22,8 @@ engine/version_test
 .DS_Store
 
 # Docker
-Dockerfile
-.dockerignore
-docker-compose*.yml
+backend/uploads
+*.mp4
 
 # Logs
 *.log

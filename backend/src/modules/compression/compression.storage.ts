@@ -1,7 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
 import { env } from "../../config/env";
-import { Readable } from "stream";
-import { createReadStream } from "fs";
 
 cloudinary.config({
     cloud_name: env.cloudinary.cloudName,
@@ -31,8 +29,7 @@ export async function uploadVideoToCloudinary(
                 resource_type: "video",
                 folder,
                 public_id: publicId,
-                unsigned: true,
-                upload_preset: "ml_default",
+                overwrite: true,
             },
             (error, result) => {
                 if (error) {
@@ -67,8 +64,7 @@ export async function uploadVideoBufferToCloudinary(
                 resource_type: "video",
                 folder,
                 public_id: publicId,
-                unsigned: true,
-                upload_preset: "ml_default",
+                overwrite: true,
             },
             (error, result) => {
                 if (error) {
@@ -88,9 +84,8 @@ export async function uploadVideoBufferToCloudinary(
             }
         );
 
-        const readable = new Readable();
-        readable.push(buffer);
-        readable.push(null);
+        const { Readable } = require("stream") as typeof import("stream");
+        const readable = Readable.from(buffer);
         readable.pipe(uploadStream);
     });
 }

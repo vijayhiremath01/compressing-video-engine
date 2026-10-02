@@ -1,0 +1,19 @@
+services:
+  api:
+    build: .
+    command: ["node", "dist/server.js"]
+    env_file: backend/.env
+    environment:
+      COMPRESSOR_PATH: /usr/local/bin/compressor
+    ports:
+      - "${PORT:-3000}:3000"
+    restart: unless-stopped
+    init: true
+  worker:
+    build: .
+    command: ["node", "dist/worker.js"]
+    env_file: backend/.env
+    environment:
+      COMPRESSOR_PATH: /usr/local/bin/compressor
+    restart: unless-stopped
+    init: true

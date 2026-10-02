@@ -1,5 +1,6 @@
 import multer from "multer";
 import path from "path";
+import { mkdirSync } from "fs";
 
 const ALLOWED_VIDEO_MIME_TYPES = [
     "video/mp4",
@@ -16,14 +17,16 @@ const ALLOWED_VIDEO_MIME_TYPES = [
     "video/*",
 ];
 
-const MAX_FILE_SIZE = 500 * 1024 * 1024;
+import { env } from "../env";
+
+const MAX_FILE_SIZE = env.maxUploadSizeBytes;
 
 const fileFilter = (
     _req: Express.Request,
     file: Express.Multer.File,
     cb: multer.FileFilterCallback
 ): void => {
-    const isVideo = ALLOWED_VIDEO_MIME_TYPES.includes(file.mimetype) || file.mimetype.startsWith("video/");
+    const isVideo = ALLOWED_VIDEO_MIME_TYPES.includes(file.mimetype);
     if (!isVideo) {
         cb(new Error(`Invalid file type: ${file.mimetype}. Allowed: video/*`));
         return;
@@ -33,7 +36,9 @@ const fileFilter = (
 
 const storage = multer.diskStorage({
     destination: (_req, _file, cb) => {
-        cb(null, path.join(process.cwd(), "uploads"));
+        const destination = "/tmp/compression-uploads";
+        mkdirSync(destination, { recursive: true });
+        cb(null, destination);
     },
     filename: (_req, file, cb) => {
         const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;

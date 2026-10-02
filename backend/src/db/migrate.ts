@@ -1,5 +1,5 @@
 import { pool } from "../config/psql-db-config/pool.config";
-import { readFileSync } from "fs";
+import { readFileSync, readdirSync } from "fs";
 import { join } from "path";
 
 async function runMigrations(): Promise<void> {
@@ -13,9 +13,8 @@ async function runMigrations(): Promise<void> {
             );
         `);
 
-        const migrationFiles = [
-            "001_create_compression_jobs.sql"
-        ];
+        const migrationFiles = readdirSync(join(__dirname, "migrations"))
+            .filter((file) => /^\d+_.*\.sql$/.test(file)).sort();
 
         for (const file of migrationFiles) {
             const version = file.split("_")[0];
@@ -31,11 +30,15 @@ async function runMigrations(): Promise<void> {
             }
 
             const sql = readFileSync(join(__dirname, "migrations", file), "utf-8");
-            await client.query(sql);
-            await client.query(
-                "INSERT INTO schema_migrations (version) VALUES ($1)",
-                [version]
-            );
+            await client.query("BEGIN");
+            try {
+                await client.query(sql);
+                await client.query("INSERT INTO schema_migrations (version) VALUES ($1)", [version]);
+                await client.query("COMMIT");
+            } catch (error) {
+                await client.query("ROLLBACK");
+                throw error;
+            }
             console.log(`Applied migration ${version}`);
         }
 

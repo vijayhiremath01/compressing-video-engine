@@ -1,5 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { createJob, getJob, processCompressionJob } from "./compression.service";
+import { createJob, getJob } from "./compression.service";
+import { uploadVideoToCloudinary } from "./compression.storage";
+import { unlink } from "fs/promises";
+import { isUUID } from "../../utils/uuid";
 
 export async function createCompressionJob(
     req: Request,
@@ -14,20 +17,10 @@ export async function createCompressionJob(
             return;
         }
 
-        const job = await createJob(
-            req.file.originalname,
-            req.file.size
-        );
-
-        // Start processing asynchronously (fire and forget)
-        processCompressionJob(
-            job.id,
-            req.file.path,
-            req.file.originalname,
-            req.file.size
-        ).catch((error) => {
-            console.error(`[${job.id}] Unhandled processing error:`, error);
-        });
+        const source = await uploadVideoToCloudinary(req.file.path, "compression/originals", "orig");
+        const job = await createJob(req.file.originalname, req.file.size, source.secureUrl, source.publicId);
+        console.log(`[${job.id}] Job queued with durable original video`);
+        await unlink(req.file.path).catch(() => undefined);
 
         res.status(202).json({
             message: "Compression job created",
@@ -47,6 +40,8 @@ export async function createCompressionJob(
         res.status(500).json({
             message: "Failed to create compression job",
         });
+    } finally {
+        if (req.file?.path) await unlink(req.file.path).catch(() => undefined);
     }
 }
 
@@ -58,7 +53,7 @@ export async function getCompressionJob(
     try {
         const { jobId } = req.params;
 
-        if (!jobId || jobId.trim() === "") {
+        if (!isUUID(jobId)) {
             res.status(400).json({
                 message: "Job ID is required",
             });

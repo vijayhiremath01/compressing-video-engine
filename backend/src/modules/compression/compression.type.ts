@@ -15,6 +15,7 @@ export interface CompressionJob {
     compressionRatio: number | null;
 
     originalUrl: string | null;
+    originalPublicId: string | null;
     compressedUrl: string | null;
 
     errorMessage: string | null;
@@ -22,4 +23,6 @@ export interface CompressionJob {
     createdAt: Date;
     startedAt: Date | null;
     completedAt: Date | null;
+    attempts: number;
+    maxAttempts: number;
 }

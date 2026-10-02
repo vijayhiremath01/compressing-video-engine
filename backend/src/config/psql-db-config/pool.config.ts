@@ -22,9 +22,6 @@ export const pool = new Pool({
     connectionTimeoutMillis: 30_000,
 });
 
-pool.on("error", (error) => {
-    console.error("Unexpected PostgreSQL pool error:", error);
-});
 
 pool.on("error", (error) => {
     console.error("Unexpected PostgreSQL pool error:", error);

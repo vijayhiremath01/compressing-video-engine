@@ -9,7 +9,8 @@ export interface CompressionEngineResult {
 
 export async function runCompressionEngine(
     inputPath: string,
-    outputPath: string
+    outputPath: string,
+    timeoutMs = 30 * 60 * 1000
 ): Promise<CompressionEngineResult> {
     const compressorPath = env.compressorPath;
 
@@ -21,6 +22,8 @@ export async function runCompressionEngine(
                 stdio: ["ignore", "pipe", "pipe"],
             }
         );
+
+        const timeout = setTimeout(() => compressor.kill("SIGKILL"), timeoutMs);
 
         let stdout = "";
         let stderr = "";
@@ -34,6 +37,7 @@ export async function runCompressionEngine(
         });
 
         compressor.on("error", (error) => {
+            clearTimeout(timeout);
             reject(
                 new Error(
                     `Failed to start compression engine: ${error.message}`
@@ -42,6 +46,7 @@ export async function runCompressionEngine(
         });
 
         compressor.on("close", async (code) => {
+            clearTimeout(timeout);
             if (code !== 0) {
                 reject(
                     new Error(

@@ -30,6 +30,16 @@ export const env = {
     port: getPort(),
     databaseUrl: getEnv("DATABASE_URL"),
     compressorPath: getCompressorPath(),
+    compressionConcurrency: positiveInteger("COMPRESSION_CONCURRENCY", 1),
+    compressionMaxAttempts: positiveInteger("COMPRESSION_MAX_ATTEMPTS", 3),
+    compressionStaleMs: positiveInteger("COMPRESSION_STALE_MS", 30 * 60 * 1000),
+    compressionTimeoutMs: positiveInteger("COMPRESSION_TIMEOUT_MS", 30 * 60 * 1000),
+    maxUploadSizeBytes: positiveInteger("MAX_UPLOAD_SIZE_BYTES", 500 * 1024 * 1024),
+    rateLimitWindowMs: positiveInteger("RATE_LIMIT_WINDOW_MS", 60_000),
+    rateLimitMax: positiveInteger("RATE_LIMIT_MAX", 300),
+    compressionRateLimitWindowMs: positiveInteger("COMPRESSION_RATE_LIMIT_WINDOW_MS", 60_000),
+    compressionRateLimitMax: positiveInteger("COMPRESSION_RATE_LIMIT_MAX", 5),
+    trustProxy: process.env.TRUST_PROXY ?? "false",
 
     cloudinary: {
         cloudName: getEnv("CLOUDINARY_CLOUD_NAME"),
@@ -37,3 +47,11 @@ export const env = {
         apiSecret: getEnv("CLOUDINARY_API_SECRET"),
     },
 };
+
+function positiveInteger(name: string, fallback: number): number {
+    const parsed = Number(process.env[name] ?? fallback);
+    if (!Number.isSafeInteger(parsed) || parsed <= 0) {
+        throw new Error(`Invalid ${name}; expected a positive integer`);
+    }
+    return parsed;
+}
